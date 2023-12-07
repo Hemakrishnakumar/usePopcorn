@@ -38,8 +38,11 @@ function MovieDetails({
 
   const addMovieHandler = () => {
     const newMovie = {
-      ...movie,
+      runTime: Number(movie.Runtime.split(" ").at(0)) || 90,
+      imdbRating: +movie.imdbRating,
       userRating: +userRating,
+      poster: movie.Poster,
+      title: movie.Title,
     };
     addWatchedMovie(newMovie);
   };
