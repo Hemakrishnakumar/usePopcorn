@@ -1,14 +1,14 @@
 import React from "react";
 
 const average = (arr) =>
-  arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
+  Number.parseFloat(
+    arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0)
+  ).toFixed(1);
 
 const WatchedMoviesSummary = ({ watched }) => {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.UserRating));
-  const avgRuntime = average(
-    watched.map((movie) => Number(movie.Runtime.split(" ").at(0)))
-  );
+  const avgUserRating = average(watched.map((movie) => movie.userRating));
+  const avgRuntime = average(watched.map((movie) => movie.runTime));
 
   return (
     <div className="summary">

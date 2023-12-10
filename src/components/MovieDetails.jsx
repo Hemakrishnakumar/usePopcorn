@@ -8,10 +8,15 @@ function MovieDetails({
   selectedMovieId,
   setSelectedMovieId,
   addWatchedMovie,
+  watched,
 }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
+
+  const isWatched = watched
+    .map((item) => item.imdbID)
+    .includes(selectedMovieId);
 
   useEffect(() => {
     fetchTheMovie();
@@ -27,7 +32,6 @@ function MovieDetails({
         if (data.Response === "False") return;
 
         setMovie(data);
-        setUserRating(data.imdbRating);
         setIsLoading(false);
       } catch (err) {
         console.log("Failed to Fetch", err.message);
@@ -36,6 +40,26 @@ function MovieDetails({
     }
   }, [selectedMovieId]);
 
+  useEffect(() => {
+    if (!movie.Title) return;
+    document.title = `Movie | ${movie.Title}`;
+    return function () {
+      document.title = "usePopcorn";
+    };
+  }, [movie]);
+
+  const cleanUp = (e) => {
+    if (e.code == "Escape") setSelectedMovieId("");
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", cleanUp);
+
+    return function () {
+      document.removeEventListener("keydown", cleanUp);
+    };
+  }, [setSelectedMovieId]);
+
   const addMovieHandler = () => {
     const newMovie = {
       runTime: Number(movie.Runtime.split(" ").at(0)) || 90,
@@ -43,6 +67,7 @@ function MovieDetails({
       userRating: +userRating,
       poster: movie.Poster,
       title: movie.Title,
+      imdbID: movie.imdbID,
     };
     addWatchedMovie(newMovie);
   };
@@ -72,16 +97,30 @@ function MovieDetails({
           </header>
           <section>
             <div className="rating">
-              <StarRating
-                key={movie.imdbID}
-                maxRating={10}
-                curRating={movie.imdbRating}
-                size={22}
-                onSetRating={setUserRating}
-              />
-              <button className="btn-add" onClick={addMovieHandler}>
-                + Add to List
-              </button>
+              {isWatched ? (
+                <p>
+                  You rated this movie with{" "}
+                  {
+                    watched.find((item) => item.imdbID === selectedMovieId)
+                      .userRating
+                  }
+                </p>
+              ) : (
+                <>
+                  <StarRating
+                    key={movie.imdbID}
+                    maxRating={10}
+                    curRating={movie.imdbRating}
+                    size={22}
+                    onSetRating={setUserRating}
+                  />
+                  {userRating > 0 && (
+                    <button className="btn-add" onClick={addMovieHandler}>
+                      + Add to List
+                    </button>
+                  )}
+                </>
+              )}
             </div>
             <p>
               <em>{movie.Plot}</em>

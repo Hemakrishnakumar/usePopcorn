@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import WatchedMoviesSummary from "./WatchedMoviesSummary";
 
-const WatchedMoviesList = ({ watched }) => {
+const WatchedMoviesList = ({ watched, deleteMovieHandler }) => {
   const [isOpen2, setIsOpen2] = useState(true);
 
   return (
@@ -33,6 +33,12 @@ const WatchedMoviesList = ({ watched }) => {
                     <span>⏳</span>
                     <span>{movie.runTime} min</span>
                   </p>
+                  <button
+                    className="btn-delete"
+                    onClick={() => deleteMovieHandler(movie.imdbID)}
+                  >
+                    X
+                  </button>
                 </div>
               </li>
             ))}

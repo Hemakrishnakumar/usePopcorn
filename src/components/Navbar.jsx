@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 const Navbar = ({ query, setQuery, movies }) => {
+  const inputEL = useRef(null);
+
+  useEffect(() => {
+    inputEL.current.focus();
+  }, []);
+
   return (
     <div>
       <nav className="nav-bar">
@@ -14,6 +20,7 @@ const Navbar = ({ query, setQuery, movies }) => {
           placeholder="Search movies..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          ref={inputEL}
         />
         <p className="num-results">
           Found <strong>{movies.length}</strong> results
